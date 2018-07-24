@@ -5,6 +5,11 @@ import tensorflow as tf
 from skimage import io
 from sklearn.model_selection import train_test_split
 
+import itertools
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.path as path
 
 _NUM_CLASSES = None
 _IMG_SHAPE = None
@@ -134,3 +139,132 @@ def get_class_name_dict():
                 continue
             class_name_dict[int(row[0])] = row[1]
     return class_name_dict
+
+
+"""
+http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+"""
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    plt.figure(figsize = (13, 13))
+    plt.tight_layout()
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    #print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+    plt.show()
+    plt.close()
+
+
+# https://matplotlib.org/gallery/api/histogram_path.html#sphx-glr-gallery-api-histogram-path-py
+def plot_bar_chart(bar_heights, title = "",
+                    xlabel = "", ylabel = "",
+                    fileName = None):
+
+    plt.rcParams["figure.figsize"] = [16, 9]
+    plt.tight_layout()
+
+    fig, ax = plt.subplots()
+    bins = np.arange(bar_heights.shape[0] + 1)
+
+    # get the corners of the rectangles for the histogram
+    left = np.array(bins[:-1])
+    right = np.array(bins[1:])
+    bottom = np.zeros(len(left))
+    top = bottom + bar_heights
+
+    # we need a (numrects x numsides x 2) numpy array for the path helper
+    # function to build a compound path
+    XY = np.array([[left, left, right, right], [bottom, top, top, bottom]]).T
+
+    # get the Path object
+    barpath = path.Path.make_compound_path_from_polys(XY)
+
+    # make a patch out of it
+    patch = patches.PathPatch(barpath)
+    ax.add_patch(patch)
+
+    width = right[0] - left[0]
+    # Hide major tick labels
+    ax.set_xticklabels('')
+
+    # Customize minor tick labels
+    ax.set_xticks(bins + width / 2.0, minor=True)
+    ax.set_xticklabels(bins, minor=True)
+    ax.set_xticks(bins)
+
+    # update the view limits
+    ax.set_xlim(left[0], right[-1])
+    ax.set_ylim(bottom.min(), top.max())
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    # plt.grid(True)
+
+    if fileName is None:
+        plt.show()
+    else:
+        fig.savefig(fileName, bbox_inches = 'tight')
+        # closing the plot is important or else the any previous plot's
+        # will be shown in output
+
+    plt.close()
+
+
+def plot_histogram(bars, title,
+                    xlabel = "Class Number",
+                    ylabel = "Class Count"):
+    bar_heights = np.bincount(bars, minlength = _NUM_CLASSES)
+    plot_bar_chart(bar_heights, title, xlabel, ylabel)
+
+
+def draw_line_graphs(x_max, y1, y1_label = "",
+                    y2 = None, y2_label = "",
+                    title = "", xlabel = "", ylabel = "",
+                    legend_loc = "best"):
+
+    plt.figure(figsize = (16, 9))
+    plt.tight_layout()
+
+    x_s = np.arange(x_max)
+    plt.plot(x_s, y1, 'b.-', label = y1_label)
+    if y2 is not None:
+        plt.plot(x_s, y2, 'r.-', label = y2_label)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    leg = plt.legend(loc = legend_loc)
+    leg.get_frame().set_alpha(0.5)
+    plt.grid(True)
+    plt.show()
+    plt.close()
