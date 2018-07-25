@@ -11,9 +11,11 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as path
 
+
 _NUM_CLASSES = None
 _IMG_SHAPE = None
 _BATCH_SIZE = None
+
 
 def init_global_vars(num_class, img_shape, batch):
     global _NUM_CLASSES
@@ -118,7 +120,8 @@ def _resize_function(image_decoded, label):
 dataset is a dictionary containing keys X and y | X, y are python list
 """
 def covert_to_tf_dataset(dataset, batch = True, repeat = True):
-    dataset_tf = tf.data.Dataset.from_tensor_slices((dataset["X"], dataset["y"]))
+    dataset_tf = tf.data.Dataset.from_tensor_slices(
+                    (dataset["X"], dataset["y"]))
     dataset_tf = dataset_tf.map(
         lambda filename, label: tuple(tf.py_func(
             _read_py_function, [filename, label], [tf.float64, label.dtype])))
@@ -157,9 +160,9 @@ def plot_confusion_matrix(cm, classes,
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        print("\nNormalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        print("\nConfusion matrix, without normalization")
 
     #print(cm)
 
@@ -167,7 +170,7 @@ def plot_confusion_matrix(cm, classes,
     plt.title(title)
     plt.colorbar()
     tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
+    plt.xticks(tick_marks, classes, rotation=90)
     plt.yticks(tick_marks, classes)
 
     fmt = '.2f' if normalize else 'd'
@@ -185,7 +188,9 @@ def plot_confusion_matrix(cm, classes,
     plt.close()
 
 
-# https://matplotlib.org/gallery/api/histogram_path.html#sphx-glr-gallery-api-histogram-path-py
+"""
+https://matplotlib.org/gallery/api/histogram_path.html#sphx-glr-gallery-api-histogram-path-py
+"""
 def plot_bar_chart(bar_heights, title = "",
                     xlabel = "", ylabel = "",
                     fileName = None):
@@ -268,3 +273,25 @@ def draw_line_graphs(x_max, y1, y1_label = "",
     plt.grid(True)
     plt.show()
     plt.close()
+
+
+def get_conf_matrix_stat(conf_matrix):
+    row_sum = conf_matrix.sum(axis = 1)
+    col_sum = conf_matrix.sum(axis = 0)
+    tp = conf_matrix.diagonal()
+    tn = conf_matrix.sum() - row_sum - col_sum + tp
+    fn = row_sum - tp
+    fp = col_sum - tp
+    return tp, fp, tn, fn
+
+
+def get_classfier_stats(tp, fp, tn, fn):
+    precision = np.nan_to_num(tp/(tp + fp))
+
+    recall = np.nan_to_num(tp/(tp + fn))
+    # or sensitivity or true positive rate
+
+    specificity = np.nan_to_num(tn/(tn + fp))
+    # or true negative rate
+
+    return precision, recall, specificity
