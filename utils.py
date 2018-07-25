@@ -295,3 +295,8 @@ def get_classfier_stats(tp, fp, tn, fn):
     # or true negative rate
 
     return precision, recall, specificity
+
+
+# f1 score punishes extreme values
+def get_f1_score(precision, recall):
+    return 2.0 * (precision * recall) / (precision + recall)
