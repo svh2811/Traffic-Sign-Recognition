@@ -78,7 +78,13 @@ My final model results were:
 
 I collected 18 traffic sign images from internet and these images are saved in the directory `./examples` and the filename have the format `class-number_index.image-extension`.
 
-I tested my neural network model on these example images. My model predicted correct images with an accuracy of 0.72 where 13/18 images were correctly classified, with a 
+I tested my neural network model on these example images.
+
+Top 5 predictions with the corresponding class labels are displayed in this table [this table](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Top-K-Prediction-Table)
+
+Next [confusion matrix](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Confusion-Matrix-Plot) for these predictions were plotted.
+
+My model predicted correct images with an accuracy of 0.72 where 13/18 images were correctly classified, with a 
 mean class precison of 0.19
 mean class recall of 0.20
 mean class specificity of 0.99
@@ -88,7 +94,7 @@ precision and recall score are relatively low, one major reason that explains th
 
 A general issue that emerges is that model struggles to correctly classify images that have random noise in them. For e.g.: the watermarks on the images. or the vewing angle of the image is acute.
 
-### Visualizing the Neural Network
+### [Visualizing the Neural Network](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Step-5:-Visualize-the-Neural-Network's-State-with-Test-Images)
 
 Finally, the activations of Conv1 and Conv2 layers (for any 3 random images in the test dataset) were visualized. Conv1 layers seems to extract edge information from images at different angles. Conv2 visualizations are difficult to interpret, it seems to extract primary image artifacts. 
 
