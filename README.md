@@ -32,7 +32,7 @@ Here is a link to my [project code](https://github.com/svh2811/Traffic-Sign-Reco
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed across classes. [project code](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb)
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed across classes.
 
 [Training Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-training-dataset)
 
