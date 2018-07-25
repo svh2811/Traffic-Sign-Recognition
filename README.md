@@ -34,11 +34,11 @@ Here is a link to my [project code](https://github.com/svh2811/Traffic-Sign-Reco
 
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed across classes. [project code](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb)
 
-![Training Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-training-dataset)
+[Training Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-training-dataset)
 
-![Validation Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-validation-dataset)
+[Validation Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-validation-dataset)
 
-![Testing Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-test-dataset)
+[Testing Dataset Class Distribution](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Frequency-of-Class-Examples-in-test-dataset)
 
 ### Data Preprocessing
 
@@ -48,21 +48,21 @@ While creating tensorflow batch dataset every image in the german traffic sign d
 
 My final model consisted of the following layers:
 
-| Layer         		     | Description                                    | 
-|:--------------------:|:----------------------------------------------:| 
-| Input         		     | (?, 32, 32, 3) RGB image   							             | 
-| Convolution 5x5     	| 1x1 stride, valid padding, Out: (?, 28, 28, 6) |
-| RELU					            |	Out: (?, 28, 28, 6)                            |
-| Max pooling	      	  | 2x2 stride,  Out: (?, 14, 14, 6) 				          |
-| Dropout              | Out: (?, 14, 14, 6)                            |
-| Convolution 5xs     	| 1x1 stride, valid padding, Out: (?, 10, 10, 16)|
-| RELU					            |	Out: (?, 10, 10, 16)                           |
-| Max pooling	      	  | 2x2 stride,  Out: (?, 5, 5, 16) 				           |
-| Dropout              | Out: (?, 5, 5, 16)                             |
-| Flatten              | Out: (?, 400)                                  | 
-| Fully connected		    | Out: (?, 120)								                          |
-| Fully connected		    | Out: (?, 84) 								                          |
-| Softmax				          | Out: (?, 43) 								                          |
+| Layer | Description | 
+|:--------------------:|:--------------------:| 
+| Input | (?, 32, 32, 3) RGB image | 
+| Convolution 5x5 | 1x1 stride, valid padding, Out: (?, 28, 28, 6) |
+| RELU |	Out: (?, 28, 28, 6) |
+| Max pooling | 2x2 stride,  Out: (?, 14, 14, 6) |
+| Dropout | Out: (?, 14, 14, 6) |
+| Convolution 5x5 | 1x1 stride, valid padding, Out: (?, 10, 10, 16)|
+| RELU |	Out: (?, 10, 10, 16) |
+| Max pooling | 2x2 stride,  Out: (?, 5, 5, 16) |
+| Dropout | Out: (?, 5, 5, 16) |
+| Flatten | Out: (?, 400) | 
+| Fully connected | Out: (?, 120) |
+| Fully connected | Out: (?, 84) |
+| Softmax | Out: (?, 43) |
 
 #### 3. Training methodology
 
