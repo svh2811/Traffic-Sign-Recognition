@@ -12,25 +12,9 @@ The goals / steps of this project are the following:
 * Design, train and test a Neural network model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
-* Visualza the activations of convolution layers 
+* Visualization the activations of convolution layers 
 
-
-[//]: # (Image References)
-
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
-
-## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
-
----
-### Writeup / README
+--
 
 #### 1. Code Workflow
 
@@ -80,74 +64,34 @@ My final model consisted of the following layers:
 | Fully connected		    | Out: (?, 84) 								                          |
 | Softmax				          | Out: (?, 43) 								                          |
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 3. Training methodology
 
-To train the model, I used an ....
+I used Adam Optimizer with learning rate 3e-4. The model was trained for 50 epochs with dataset-batch-size: 32.
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+#### 4. Model evaluation
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* validation set accuracy of 0.96 
+* test set accuracy of 0.94
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+### Testing Model on New Images
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+I collected 18 traffic sign images from internet and these images are saved in the directory `./examples` and the filename have the format `class-number_index.image-extension`.
 
-### Test a Model on New Images
+I tested my neural network model on these example images. My model predicted correct images with an accuracy of 0.72 where 13/18 images were correctly classified, with a 
+mean class precison of 0.19
+mean class recall of 0.20
+mean class specificity of 0.99
+and F1 Score is 0.19
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+precision and recall score are relatively low, one major reason that explains these scores is there are only 18 examples and some class images are not included at all.
 
-Here are five German traffic signs that I found on the web:
+A general issue that emerges is that model struggles to correctly classify images that have random noise in them. For e.g.: the watermarks on the images. or the vewing angle of the image is acute.
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+### Visualizing the Neural Network
 
-The first image might be difficult to classify because ...
+Finally, the activations of Conv1 and Conv2 layers (for any 3 random images in the test dataset) were visualized. Conv1 layers seems to extract edge information from images at different angles. Conv2 visualizations are difficult to interpret, it seems to extract primary image artifacts. 
 
-#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+### Future Work
 
-Here are the results of the prediction:
-
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
-
-
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
-
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
-
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
-
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
-
-For the second image ... 
-
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
-
-
+Fromm the dataset class distribution, we see that the dataset class distribution is skewed. To fix this issue we can augmennt the data to balance the class distributions.
