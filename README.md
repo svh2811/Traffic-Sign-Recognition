@@ -63,10 +63,6 @@ ImageDataGenerator was used to preprocess batches of images and split the traini
 - Zero Mean and uniform variance
 - Histogram Equalization
 
-
-
-While creating tensorflow batch dataset every image in the german traffic sign dataset was resized to dimension (32, 32, 3) and then this image was normalized. [normalization details](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Normalization)
-
 ### Classification Model
 
 #### 1. Model Architecture
@@ -125,7 +121,7 @@ Train-validation split was 70-30. Adam Optimizer with intitial learning rate 5e-
 
 ### Testing Model on New Images
 
-60 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model was trained on these example images, to check its perfomance. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes the Top-5 predictions as well as the class confidence of prediction as a bar chart.
+60 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model was trained on these example images, to check its perfomance. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes the Top-5 predictions as well as the softmax prediction probabilities of the new images as a bar chart.
 
 #### Observations
 
