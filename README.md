@@ -148,5 +148,5 @@ Finally, the activations of Conv1 of Block-1 (for any 2 random images in the tes
 ### Future Work
 
 - Augmenting the dataset with random brightness change
-- Since the model is learning redundant features like, sign board shape, and additional preprocessing step that can be apllied is center the image
+- Since the model is learning redundant features like, sign board shape, an additional preprocessing step that can be apllied is center the image
 - Experiment with a model containing skip connections
