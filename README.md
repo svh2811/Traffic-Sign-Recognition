@@ -43,11 +43,8 @@ After augmenting the dataset the class distribution now were:
 Below are class disitribution statistics after augmentation:
 
 * Number of training examples after data augmentation :  96609
-
 * Number of examples added to training dataset        :  57400
-
 * Max examples for a class :  2250
-
 * Min examples for a class :  2239
 
 #### 4. Data Preprocessing
@@ -118,21 +115,33 @@ Adam Optimizer with intitial learning rate 5e-3 was used, however the learning r
 * test set recall : 0.9336
 * test set f1-score : 0.9394
 
-#### 4. Training tradeoffs
-- Initial model was based on LeNet architecture which had a test set accuracy of 0.90
-- Later a higher capicity model was build to handle the augmented dataset
-- Model performance improved when grayscale images were used instead of rgb images
-- Batch Normalization significantly improved training speed
-- Larger batch size helped the model to avoid overfitting
+#### 4. Experiments
+* Initial model was based on LeNet architecture which had a test set accuracy of 0.89
+  * This model was underfitting 
+  * Various experiments to prevent underfitting and even overfit the dataset were futile
+  * Some of these experiments were:
+    * training model for many epochs
+    * training model with different batch sizes
+    * limited regularization
+* Later a higher capicity model was devised
+   * This model was overfitting the dataset with validation set accuracy of 0.89
+   * Next, the training dataset was augmented so that all classes have approximately same number of examples, the model now was generalizing well with a validation set accuracy of 0.92
+   * To further improve the accuracy of the model, grayscale images were used instead of rgb images. This helped model to improve accuracy by 1.5% and more importantly it was able to better classify web examples. However the recall on test dataset  was 0.90.
+* In a effort to improve recall on test dataset:
+  * convolution layers with more kernel were used, specifically the number of kernals in convolution layers of second block was increased from 64 to 128.
+  * In addition, Batch Normalization layer was added which significantly improved training speed
+  * This steps helped to improve model's test set accuracy to 0.96, however the model was overfitting on training dataset and  recall on test dataset 0.91
+  * To prevent overfitting for this model version, batch size was increased from 64 to 512, larger batch size aided the model to prevent overfitting on training dataset and improved generalization.
+  * Recall on test dataset now increased from 0.91 to 0.9336
 
 ### Testing Model on New Images
 
 84 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model predicted the top 5 probable class labels for these example images. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes:
- * Ground truth class label
- * Image who's class label was predicted
- * Most likely class label
- * Top 5 most likely class labels
- * Bar chart showing the probability values of all 43 class probablities.
+* Ground truth class label
+* Image who's class label was predicted
+* Most likely class label
+* Top 5 most likely class labels
+* Bar chart showing the probability values of all 43 class probablities.
 
 
 ### Visualizing the Neural Network
@@ -141,12 +150,14 @@ Finally, the activations of Conv1 of Block-1 (for any 2 random images in the tes
 
 ### Observations
 
- - The model succesfully learns the pattern of the traffic images, this can be inferred from test set evaluation metric.
-- Model not only learn the sign but also learns the shape of the sign board, this makes it difficult for the model to correctly classifly the same sign on a different shaped board.
-
+* The model succesfully learns the pattern of the traffic images, this can be inferred from test set evaluation metric.
+* This model can correctly classify images with random transformation. However the model would stuggle if learned features are absent in the target image. For e.g.:
+  * Model not only learn the sign but also learns the shape of the sign board, this makes it difficult for the model to correctly classifly the same sign on a different shaped board.
+  * Images where target sign is not of the scale as the images in training dataset.
+  * Images with multiple signs
 
 ### Future Work
 
-- Augmenting the dataset with random brightness change
-- Since the model is learning redundant features like, sign board shape, an additional preprocessing step that can be apllied is center the image
-- Experiment with a model containing skip connections
+* Augmenting the dataset with random brightness change.
+* Since the model is learning redundant features like, sign board shape, an additional preprocessing step that can be applied is center-crop the image.
+* Experiment with a model containing skip connections.
