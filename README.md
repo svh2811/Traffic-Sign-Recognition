@@ -74,9 +74,8 @@ My final model consisted of the following layers:
 | BatchNomalization   | (None, 356)           | 1424      
 | Activation('relu')  | (None, 356)           | 0         
 | Dropout             | (None, 356)           | 0         
-_________________________________________________________________
-fc3 (Dense)                  (None, 43)                15351     
-=================================================================
+| fc3 (Dense)         | (None, 43)            | 15351     
+
 Total params: 1,545,391
 Trainable params: 1,543,199
 Non-trainable params: 2,192
