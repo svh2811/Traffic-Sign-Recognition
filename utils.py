@@ -2,140 +2,125 @@ import os
 import numpy as np
 import csv
 import tensorflow as tf
-from skimage import io
-from sklearn.model_selection import train_test_split
 
-import itertools
-import numpy as np
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+
+from constants import *
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as path
 
+import cv2
+import itertools
 
-_NUM_CLASSES = None
-_IMG_SHAPE = None
-_BATCH_SIZE = None
-
-
-def init_global_vars(num_class, img_shape, batch):
-    global _NUM_CLASSES
-    _NUM_CLASSES = num_class
-    global _IMG_SHAPE
-    _IMG_SHAPE = img_shape
-    global _BATCH_SIZE
-    _BATCH_SIZE = batch
-
-
-def get_examples_dataset():
-    database = {
-        "X" : [],
-        "y" : []
-    }
-    base_dir = "./examples"
-
-    for imgName in os.listdir(base_dir):
-        database["X"].append(os.path.join(base_dir, imgName))
-        database["y"].append(int(imgName[0:2]))
-
-    return database
-
-
-def get_traffic_sign_dataset(test_ratio = 0.10):
-    directory = "./data"
-    training_dir = directory + "/GTSRB/Final_Training/Images/"
-    testing_dir = directory + "/GTSRB/Final_Test/Images/"
-
-    dataset = {
-        "train" : {},
-        "val" : {},
-        "test" : {}
-    }
-
+def get_dataset(dir, save_img = False):
+    dataset = {}
     X = []
     y = []
 
-    for i, class_folder in enumerate(os.listdir(training_dir)):
-        class_folder_dir = training_dir + class_folder
+    for i, class_folder in enumerate(os.listdir(dir)):
+        class_folder_dir = dir + "/" + class_folder
         for imgName in os.listdir(class_folder_dir):
             index = imgName.index(".") + 1
             if imgName[index:] == "csv":
                 continue
-            X.append(os.path.join(class_folder_dir, imgName))
+            if save_img:
+                X.append(os.path.join(class_folder_dir, imgName))
             y.append(int(class_folder))
 
-    X_train, X_val, y_train, y_val =\
-        train_test_split(X, y, test_size = test_ratio, shuffle = True)
+    if save_img:
+        dataset["X"] = X
 
-    dataset["train"]["X"] = X_train
-    dataset["train"]["y"] = y_train
-    dataset["val"]["X"] = X_val
-    dataset["val"]["y"] = y_val
-
-    X_test = []
-    y_test = []
-
-    with open(os.path.join(directory, "GT-final_test.csv")) as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=';')
-        for i, row in enumerate(readCSV):
-            if i == 0:
-                continue
-            X_test.append(os.path.join(testing_dir, row[0]))
-            y_test.append(int(row[7]))
-    dataset["test"]["X"] = X_test
-    dataset["test"]["y"] = y_test
+    dataset["y"] = y
 
     return dataset
 
 
 """
-Image: np.array of shape (W, H, C)
+Reference:
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
 """
-def norm_image(image):
-    image = image.astype(float)
-    image = image[:, :, 0:3] # ignore alpha channel
-    H, W, C = image.shape
-    for i in np.arange(C):
-        channel = image[:,:, i]
-        min = channel.min()
-        max = channel.max()
-        image[:,:, i] = (image[:,:, i] - min) * (255.0 - 0.0)/(max - min) + 0.0
-    return image
+def balance_training_dataset(train_db_class_count, max_class_count):
+    augment_count = max_class_count - train_db_class_count
 
+    log = "class #{:03d} has {:04d} images"\
+            + " {:04d} images approx will be added"
+    for class_num, class_augment_count in enumerate(augment_count):
+        print(log.format(class_num,
+                        train_db_class_count[class_num],
+                        class_augment_count))
 
-def _read_py_function(filename, label):
-    # imread(...) returns a np.array of dtype int
-    image_decoded_np = norm_image(io.imread(filename.decode()))
-    return image_decoded_np, label
+        if class_augment_count == 0:
+            continue
 
+        target_class_dir = training_dir + "/{:05d}".format(class_num)
 
-def _resize_function(image_decoded, label):
-    image_decoded.set_shape([None, None, None])
-    image_resized = tf.image.resize_images(image_decoded,
-                        [_IMG_SHAPE[0], _IMG_SHAPE[1]])
-    label = tf.one_hot(tf.cast(label, tf.uint8), _NUM_CLASSES)
-    return image_resized, label
+        """
+        every class-folder is composed of several tracks and each track
+        has exactly 30* snapshots, however the number of tracks
+        in each class-folder would vary. Our approach is to randomly
+        select an track and use 29th (0 Indexed) snapshot as it has
+        highest resolution.
+        """
 
+        for _ in np.arange(class_augment_count):
 
-"""
-dataset is a dictionary containing keys X and y | X, y are python list
-"""
-def covert_to_tf_dataset(dataset, batch = True, repeat = True):
-    dataset_tf = tf.data.Dataset.from_tensor_slices(
-                    (dataset["X"], dataset["y"]))
-    dataset_tf = dataset_tf.map(
-        lambda filename, label: tuple(tf.py_func(
-            _read_py_function, [filename, label], [tf.float64, label.dtype])))
-    dataset_tf = dataset_tf.map(_resize_function)
-    if batch:
-        dataset_tf = dataset_tf.batch(_BATCH_SIZE)
-    if repeat:
-        dataset_tf = dataset_tf.repeat()
-    return dataset_tf
+            """
+            This function may be called again on an already augmented
+            dataset, hence it is imperative to know the original number of
+            training images
+            """
+            count = 0
+            csvFileName = target_class_dir + "/GT-{:05d}.csv".format(class_num)
+            with open(csvFileName) as csvfile:
+                readCSV = csv.reader(csvfile, delimiter=',')
+                for i, _ in enumerate(readCSV):
+                    if i != 0:
+                        count += 1
+
+            random_track = np.random.randint(count // 30)
+
+            """
+            Some rogue tracks have < 30 snapshots
+            Eg: class 33 track 19 has no 29th snap
+            """
+            snap = 29
+            file = None
+            img = None
+            while snap >= 0:
+                try:
+                    img = load_img(target_class_dir + "/{:05d}_{:05d}.ppm"\
+                                                    .format(random_track, snap))
+                    break
+                except FileNotFoundError:
+                    snap -=  1
+
+            if snap == -1:
+                print("class #{:03d} could not be augmented".format(class_num))
+                break
+
+            img = img_to_array(img)
+            img = img.reshape((1,) + img.shape)
+
+            image_data_iterator = ImageDataGenerator(
+                rotation_range = 30,
+                shear_range = 0.30,
+                width_shift_range = 0.30,
+                height_shift_range = 0.30
+            ).flow(img,
+                batch_size = 1,
+                save_to_dir = target_class_dir,
+                save_prefix = "keras_aug")
+
+            # augment one image at a time
+            for batch in image_data_iterator:
+                break
 
 
 def get_class_name_dict():
     class_name_dict = {}
-    with open(os.path.join("./data", "signnames.csv")) as csvfile:
+    with open(base_directory + "/signnames.csv") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=',')
         for i, row in enumerate(readCSV):
             if i == 0:
@@ -155,7 +140,7 @@ def plot_confusion_matrix(cm, classes,
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
-    plt.figure(figsize = (13, 13))
+    plt.figure(figsize = (15, 15))
     plt.tight_layout()
 
     if normalize:
@@ -195,7 +180,7 @@ def plot_bar_chart(bar_heights, title = "",
                     xlabel = "", ylabel = "",
                     fileName = None):
 
-    plt.rcParams["figure.figsize"] = [16, 9]
+    plt.rcParams["figure.figsize"] = [14, 6]
     plt.tight_layout()
 
     fig, ax = plt.subplots()
@@ -246,14 +231,7 @@ def plot_bar_chart(bar_heights, title = "",
     plt.close()
 
 
-def plot_histogram(bars, title,
-                    xlabel = "Class Number",
-                    ylabel = "Class Count"):
-    bar_heights = np.bincount(bars, minlength = _NUM_CLASSES)
-    plot_bar_chart(bar_heights, title, xlabel, ylabel)
-
-
-def draw_line_graphs(x_max, y1, y1_label = "",
+def draw_line_graphs(y1, y1_label = "",
                     y2 = None, y2_label = "",
                     title = "", xlabel = "", ylabel = "",
                     legend_loc = "best"):
@@ -261,7 +239,7 @@ def draw_line_graphs(x_max, y1, y1_label = "",
     plt.figure(figsize = (16, 9))
     plt.tight_layout()
 
-    x_s = np.arange(x_max)
+    x_s = np.arange(len(y1))
     plt.plot(x_s, y1, 'b.-', label = y1_label)
     if y2 is not None:
         plt.plot(x_s, y2, 'r.-', label = y2_label)
@@ -300,3 +278,31 @@ def get_classfier_stats(tp, fp, tn, fn):
 # f1 score punishes extreme values
 def get_f1_score(precision, recall):
     return 2.0 * (precision * recall) / (precision + recall)
+
+
+# image is a grayscale image of shape (H, W, 1)
+def histogram_equalize_rgb_image(image):
+    # equalizeHist requires int dtype
+    y = cv2.equalizeHist(np.array(image, dtype = np.uint8))
+    y = y.reshape((y.shape[0], y.shape[1], 1))
+    return y.astype(np.float32)
+
+"""
+else:
+
+    if C > 3:
+        image = image[:, :, :3]
+    img_ycbcr = cv2.cvtColor(image, cv2.COLOR_RGB2YCR_CB) # float32 image
+    y = np.array(img_ycbcr[:, :, 0], dtype = np.uint8)
+    y = cv2.equalizeHist(y) # equalizeHist requires int dtype
+    img_ycbcr[:, :, 0] = y.astype(np.float32)
+    return cv2.cvtColor(img_ycbcr, cv2.COLOR_YCR_CB2RGB)
+"""
+
+
+def tensor_to_numpy(tensor):
+    # tensor.numpy() only works in eager execution mode
+    sess = tf.Session()
+    with sess.as_default():
+        numpy_arr = tensor.eval()
+    return numpy_arr
