@@ -6,7 +6,7 @@ The goals / steps of this project are the following:
 * Load the German Traffic Sign data set
 * Explore, summarize and visualize the data set
 * Design, train and test a Neural network model architecture
-* Use the model to make predictions on new images (found on internet)
+* Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Visualization the activations of convolution layers 
 
@@ -73,8 +73,6 @@ The training-validation split is 0.30. The entire training dataset is divided in
 
 #### 1. Model Architecture
 
-My final model consisted of the following layers:
-
 | Layer (type)        | Output Shape          | Param #   
 |---                  |:---                   |:---
 | Conv2D              | (None, 30, 30, 64)    | 640       
@@ -107,11 +105,11 @@ My final model consisted of the following layers:
 * Non-trainable params: 3,616
 _________________________________________________________________
 
-#### 3. Training methodology
+#### 2. Training methodology
 
 Adam Optimizer with intitial learning rate 5e-3 was used, however the learning rate was scaled down by a factor of 10 every 3 epochs if the validation-accuracy did not increase by 0.05%. The model configured to be trained for a maximum of 150 epochs but with an early stop on training if the validation-accuracy did not increase by 0.05% for 15 epochs. Eventually the training terminated early after 24 epochs. All activations from Convolution layers and fully-connected-layers were batch-normalized as well. Intermediate Fully Connected Layer were regularized using dropout with a dropout factor of 50% and final layer was regularized using l2 loss. Batch-size used was 512, and the model was trained on Nvidia Gt 1050Ti 4GB gpu for about 24 minutes.
 
-#### 4. Model performance
+#### 3. Model performance
 
 * training set accuracy   : 0.9687 
 * validation set accuracy : 0.9623 
@@ -120,16 +118,16 @@ Adam Optimizer with intitial learning rate 5e-3 was used, however the learning r
 * test set recall : 0.9336
 * test set f1-score : 0.9394
 
-#### 5. Training tradeoffs
-- Initial model was based on LeNet architecture was performed fairly well with a test set accuracy of 0.90
+#### 4. Training tradeoffs
+- Initial model was based on LeNet architecture which had a test set accuracy of 0.90
 - Later a higher capicity model was build to handle the augmented dataset
 - Model performance improved when grayscale images were used instead of rgb images
 - Batch Normalization significantly improved training speed
-- Larger batch size helped the model prevent overfitting
+- Larger batch size helped the model to avoid overfitting
 
 ### Testing Model on New Images
 
-84 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model was predicted the top 5 probable class labels for these example images. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes:
+84 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model predicted the top 5 probable class labels for these example images. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes:
  * Ground truth class label
  * Image who's class label was predicted
  * Most likely class label
@@ -143,13 +141,12 @@ Finally, the activations of Conv1 of Block-1 (for any 2 random images in the tes
 
 ### Observations
 
- - A general issue that emerges is that model struggles to correctly classify images that have random noise in them. For e.g.: the watermarks on the images. or the viewing angle of the image is acute.
-
-- Model finds it difficult to distinguish between similar sign
-
+ - The model succesfully learns the pattern of the traffic images, this can be inferred from test set evaluation metric.
 - Model not only learn the sign but also learns the shape of the sign board, this makes it difficult for the model to correctly classifly the same sign on a different shaped board.
+
 
 ### Future Work
 
 - Augmenting the dataset with random brightness change
+- Since the model is learning redundant features like, sign board shape, and additional preprocessing step that can be apllied is center the image
 - Experiment with a model containing skip connections
