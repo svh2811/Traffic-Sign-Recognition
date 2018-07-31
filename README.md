@@ -32,7 +32,9 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 <img src="/plots/train_ds_dist.png" />
 
 Number of training examples before data augmentation :  39209
+
 Max examples for a class   :  2250
+
 Min examples for a class   :  210
 
 #### 3. Data Augmentation
@@ -43,9 +45,13 @@ After augmenting the dataset the class distribution now were:
 <img src="/plots/train_ds_dist_after.png" />
 
 Below are class disitribution statistics after augmentation:
+
 Number of training examples after data augmentation :  96596
+
 Number of examples added to training dataset        :  57387
+
 Max examples for a class :  2250
+
 Min examples for a class :  2240
 
 #### 4. Data Preprocessing
