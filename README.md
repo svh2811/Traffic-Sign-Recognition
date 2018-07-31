@@ -109,7 +109,7 @@ _________________________________________________________________
 
 #### 3. Training methodology
 
-Train-validation split was 70-30. Adam Optimizer with intitial learning rate 5e-3 was used, however the learning rate was scaled down by a factor of 10 every 5 epochs if the validation-accuracy did not increase by 0.05%. The model was trained for 50 epochs with an early stop on training if the validation-accuracy did not increase by 0.05% for 15 epochs. Intermediate Fully Connected Layer were regularized using dropout with a dropout factor of 50% and final layer was regularized using l2 loss. All activations from Convolution layers and fully-connected-layers were batch-normalized as well. Batch-size used was 64, and the model was trained on Nvidia Gt 1050Ti 4GB gpu for about 25 minutes.
+Adam Optimizer with intitial learning rate 5e-3 was used, however the learning rate was scaled down by a factor of 10 every 3 epochs if the validation-accuracy did not increase by 0.05%. The model configured to be trained for a maximum of 150 epochs but with an early stop on training if the validation-accuracy did not increase by 0.05% for 15 epochs. Eventually the training terminated early after 24 epochs. All activations from Convolution layers and fully-connected-layers were batch-normalized as well. Intermediate Fully Connected Layer were regularized using dropout with a dropout factor of 50% and final layer was regularized using l2 loss. Batch-size used was 512, and the model was trained on Nvidia Gt 1050Ti 4GB gpu for about 24 minutes.
 
 #### 4. Model performance
 
