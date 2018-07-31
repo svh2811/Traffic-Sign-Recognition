@@ -10,7 +10,7 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Visualization the activations of convolution layers 
 
---
+---
 
 ### Data Set Summary & Exploration
 
