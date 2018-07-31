@@ -2,8 +2,6 @@
 
 ---
 
-**Build a Traffic Sign Recognition Project**
-
 The goals / steps of this project are the following:
 * Load the German Traffic Sign data set
 * Explore, summarize and visualize the data set
@@ -21,7 +19,7 @@ The goals / steps of this project are the following:
 * The size of training set is 35288
 * The size of the validation set is 3921
 * The size of test set is 12630
-* The shape of a traffic sign image (after resizing) is (32, 32, 3)
+* The shape of a traffic sign image (after resizing) is (32, 32, 1)
 * The number of unique classes/labels in the data set is 43
 
 #### 2. Exploratory visualization of the dataset.
