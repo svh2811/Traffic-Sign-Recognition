@@ -4,8 +4,6 @@ wget http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_Images.zip
 
 wget http://benchmark.ini.rub.de/Dataset/GTSRB_Final_Test_GT.zip
 
-mv GTSRB_Final_Training_Images.zip ./data
-
 mv GTSRB_Final_Test_Images.zip ./data
 
 mv GTSRB_Final_Test_GT.zip ./data
@@ -23,3 +21,5 @@ rm GTSRB_Final_Test_Images.zip
 unzip GTSRB_Final_Test_GT.zip
 
 rm GTSRB_Final_Test_GT.zip
+
+python3 group_test_images.py
