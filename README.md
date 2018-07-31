@@ -10,15 +10,11 @@ The goals / steps of this project are the following:
 * Load the German Traffic Sign data set
 * Explore, summarize and visualize the data set
 * Design, train and test a Neural network model architecture
-* Use the model to make predictions on new images
+* Use the model to make predictions on new images (found on internet)
 * Analyze the softmax probabilities of the new images
 * Visualization the activations of convolution layers 
 
 --
-
-#### 1. Code Workflow
-
-Here is a link to my [project code](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb)
 
 ### Data Set Summary & Exploration
 
@@ -30,22 +26,44 @@ Here is a link to my [project code](https://github.com/svh2811/Traffic-Sign-Reco
 * The shape of a traffic sign image (after resizing) is (32, 32, 3)
 * The number of unique classes/labels in the data set is 43
 
-#### 2. Include an exploratory visualization of the dataset.
+#### 2. Exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed across classes.
-
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is distributed across classes in training dataset.
+<img src="/plots/train_ds_dist.png" />
 
 Number of training examples before data augmentation :  39209
 Max examples for a class   :  2250
 Min examples for a class   :  210
 
-First thing that we observe here is that the class distribution is skewed and this would affect the classfication ability of our model.
+#### 3. Data Augmentation
 
-### Data Preprocessing
+The first issue that was addressed was dataset class skewness, this was done using augmenting the training dataset with random transformation. Random transformations include X-shift, y-shift, sheer, rotation. A utils function named `balance_training_dataset()` was created to augment dataset.
+
+After augmenting the dataset the class distribution now were:
+<img src="/plots/train_ds_dist_after.png" />
+
+Below are class disitribution statistics after augmentation:
+Number of training examples after data augmentation :  96596
+Number of examples added to training dataset        :  57387
+Max examples for a class :  2250
+Min examples for a class :  2240
+
+#### 4. Data Preprocessing
+
+ImageDataGenerator was used to preprocess batches of images and split the training dataset into training dataset and validation dataset. Preprocessing operations performed were
+- RGB to grayscale conversion
+- resizing images from various resoltions to image size (32, 32)
+- Normalization
+- Zero Mean and uniform variance
+- Histogram Equalization
+
+
 
 While creating tensorflow batch dataset every image in the german traffic sign dataset was resized to dimension (32, 32, 3) and then this image was normalized. [normalization details](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Normalization)
 
-#### Model Architecture 
+### Classification Model
+
+#### 1. Model Architecture
 
 My final model consisted of the following layers:
 
@@ -83,38 +101,39 @@ _________________________________________________________________
 
 #### 3. Training methodology
 
-I used Adam Optimizer with learning rate 3e-4. The model was trained for 50 epochs with dataset-batch-size: 32.
+Train-validation split was 70-30. Adam Optimizer with intitial learning rate 5e-3 was used, however the learning rate was scaled down by a factor of 10 every 5 epochs if the validation-accuracy did not increase by 0.05%. The model was trained for 50 epochs with an early stop on training if the validation-accuracy did not increase by 0.05% for 15 epochs. Intermediate Fully Connected Layer were regularized using dropout with a dropout factor of 50% and final layer was regularized using l2 loss. All activations from Convolution layers and fully-connected-layers were batch-normalized as well. Batch-size used was 64, and the model was trained on Nvidia Gt 1050Ti 4GB gpu for about 25 minutes.
 
-#### 4. Model evaluation
+#### 4. Model performance
 
-My final model results were:
-* validation set accuracy of 0.96 
-* test set accuracy of 0.94
+* validation set accuracy : 0.99 
+* validation set accuracy : 0.96 
+* test set accuracy : 0.95
+* test set precision : 0.95
+* test set recall : 0.91
+
+#### 5. Training tradeoffs
+- Initial model was based on LeNet architecture was performed fairly well with a test set accuracy of 0.90
+- Later a higher capicity model was build to handle the augmented dataset
+- Model performance improved when grayscale images were used instead of rgb images
+- Batch Normalization significantly improved training speed
 
 ### Testing Model on New Images
 
-I collected 18 traffic sign images from internet and these images are saved in the directory `./examples` and the filename have the format `class-number_index.image-extension`.
+60 traffic sign images from internet were collected and these images were saved in the directory `./data/examples/` in their appropriate class folders. Neural network model was trained on these example images, to check its perfomance. To see a detailed analysis of the Model prediction on random web images of traffic sign goto [notebook](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb). The analysis includes the Top-5 predictions as well as the class confidence of prediction as a bar chart.
 
-I tested my neural network model on these example images.
+#### Observations
 
-Top 5 predictions with the corresponding class labels are displayed in this table [this table](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Top-K-Prediction-Table)
+ - A general issue that emerges is that model struggles to correctly classify images that have random noise in them. For e.g.: the watermarks on the images. or the viewing angle of the image is acute.
 
-Next [confusion matrix](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Confusion-Matrix-Plot) for these predictions were plotted.
+- Model finds it difficult to distinguish between similar sign
 
-My model predicted correct images with an accuracy of 0.72 where 13/18 images were correctly classified, with a 
-mean class precison of 0.19
-mean class recall of 0.20
-mean class specificity of 0.99
-and F1 Score is 0.19
+- Model not only learn the sign but also learns the shape of the sign board, this makes it difficult for the model to correctly classifly the same sign on a different shaped board.
 
-precision and recall score are relatively low, one major reason that explains these scores is there are only 18 examples and some class images are not included at all.
+### Visualizing the Neural Network
 
-A general issue that emerges is that model struggles to correctly classify images that have random noise in them. For e.g.: the watermarks on the images. or the vewing angle of the image is acute.
-
-### [Visualizing the Neural Network](https://github.com/svh2811/Traffic-Sign-Recognition/blob/master/Traffic_Sign_Classifier.ipynb#Step-5:-Visualize-the-Neural-Network's-State-with-Test-Images)
-
-Finally, the activations of Conv1 and Conv2 layers (for any 3 random images in the test dataset) were visualized. Conv1 layers seems to extract edge information from images at different angles. Conv2 visualizations are difficult to interpret, it seems to extract primary image artifacts. 
+Finally, the activations of Conv1 of Block-1 (for any 2 random images in the test dataset) were visualized. Conv1 layers seems to extract edge information from images at different angles.
 
 ### Future Work
 
-Fromm the dataset class distribution, we see that the dataset class distribution is skewed. To fix this issue we can augmennt the data to balance the class distributions.
+- Augmenting the dataset with random zooms and random brighness change
+- Experiment with a model containing skip connections
