@@ -17,8 +17,8 @@ The goals / steps of this project are the following:
 #### 1. Basic summary of the data set.
 
 * The size of training set is 39209
- - Maximum examples for a class: 2250
- - Manimum examples for a class: 210
+  * Maximum examples for a class: 2250
+  * Minimum examples for a class: 210
 
 * The size of test set is 12630
 
@@ -42,13 +42,13 @@ After augmenting the dataset the class distribution now were:
 
 Below are class disitribution statistics after augmentation:
 
-Number of training examples after data augmentation :  96609
+* Number of training examples after data augmentation :  96609
 
-Number of examples added to training dataset        :  57400
+* Number of examples added to training dataset        :  57400
 
-Max examples for a class :  2250
+* Max examples for a class :  2250
 
-Min examples for a class :  2239
+* Min examples for a class :  2239
 
 #### 4. Data Preprocessing
 
@@ -151,5 +151,5 @@ Finally, the activations of Conv1 of Block-1 (for any 2 random images in the tes
 
 ### Future Work
 
-- Augmenting the dataset with random zooms and random brighness change
+- Augmenting the dataset with random brightness change
 - Experiment with a model containing skip connections
