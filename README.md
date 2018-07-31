@@ -102,9 +102,9 @@ My final model consisted of the following layers:
 | Dropout             | (None, 357)           | 0         
 | Dense               | (None, 43)            | 15394     
 
-Total params: 4,078,377
-Trainable params: 4,074,761
-Non-trainable params: 3,616
+* Total params: 4,078,377
+* Trainable params: 4,074,761
+* Non-trainable params: 3,616
 _________________________________________________________________
 
 #### 3. Training methodology
