@@ -140,7 +140,7 @@ def plot_confusion_matrix(cm, classes,
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
-    plt.figure(figsize = (15, 15))
+    plt.figure(figsize = (20, 20))
     plt.tight_layout()
 
     if normalize:
